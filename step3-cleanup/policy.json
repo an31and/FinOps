@@ -1,0 +1,121 @@
+{
+  "properties": {
+    "displayName": "Cost_Center: Remove Duplicate Variations",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "description": "Step 3: Removes duplicate Cost_Center tag variations after canonical tag is established",
+    "metadata": {
+      "category": "Tags",
+      "version": "1.0.0",
+      "author": "Anand Lakhera (anand.lakhera@ahead.com)",
+      "deploymentOrder": 3,
+      "relatedPolicies": [
+        "cost-center-normalize-v3",
+        "cost-center-inherit-rg-v3",
+        "deny-rg-without-cost-center"
+      ]
+    },
+    "version": "1.0.0",
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "notIn": [
+              "Microsoft.Resources/subscriptions/resourceGroups"
+            ]
+          },
+          {
+            "field": "tags['Cost_Center']",
+            "exists": true
+          },
+          {
+            "field": "tags['Cost_Center']",
+            "notEquals": ""
+          },
+          {
+            "anyOf": [
+              {
+                "field": "tags['Cost-Center']",
+                "exists": true
+              },
+              {
+                "field": "tags['CostCenter']",
+                "exists": true
+              },
+              {
+                "field": "tags['Cost Centre']",
+                "exists": true
+              },
+              {
+                "field": "tags['costcentre']",
+                "exists": true
+              },
+              {
+                "field": "tags['Cost-Centre']",
+                "exists": true
+              },
+              {
+                "field": "tags['Cost Center']",
+                "exists": true
+              },
+              {
+                "field": "tags['Cost_ Center']",
+                "exists": true
+              },
+              {
+                "field": "tags['cost-center']",
+                "exists": true
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "modify",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/4a9ae827-6dc8-4573-8ac7-8239d42aa03f"
+          ],
+          "operations": [
+            {
+              "field": "tags['Cost-Center']",
+              "operation": "remove"
+            },
+            {
+              "field": "tags['CostCenter']",
+              "operation": "remove"
+            },
+            {
+              "field": "tags['Cost Centre']",
+              "operation": "remove"
+            },
+            {
+              "field": "tags['costcentre']",
+              "operation": "remove"
+            },
+            {
+              "field": "tags['Cost-Centre']",
+              "operation": "remove"
+            },
+            {
+              "field": "tags['Cost Center']",
+              "operation": "remove"
+            },
+            {
+              "field": "tags['Cost_ Center']",
+              "operation": "remove"
+            },
+            {
+              "field": "tags['cost-center']",
+              "operation": "remove"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "id": "/subscriptions/{subscription-id}/providers/Microsoft.Authorization/policyDefinitions/cost-center-cleanup-v3",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "cost-center-cleanup-v3"
+}

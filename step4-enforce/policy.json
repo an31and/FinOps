@@ -1,0 +1,56 @@
+{
+  "properties": {
+    "displayName": "Deny Resource Group without Cost_Center Tag",
+    "policyType": "Custom",
+    "mode": "All",
+    "description": "Step 4 (Enforcement): Denies creation of Resource Groups without Cost_Center tag. Deploy ONLY after normalization is complete and teams have been notified.",
+    "metadata": {
+      "category": "Tags",
+      "version": "1.0.0",
+      "author": "Anand Lakhera (anand.lakhera@ahead.com)",
+      "deploymentOrder": 4,
+      "relatedPolicies": [
+        "cost-center-normalize-v3",
+        "cost-center-inherit-rg-v3",
+        "cost-center-cleanup-v3"
+      ],
+      "warnings": [
+        "This is an enforcement policy that BLOCKS resource creation",
+        "Deploy ONLY after Steps 1-3 achieve 99%+ compliance",
+        "Communicate enforcement date to teams at least 2 weeks in advance",
+        "Start in DoNotEnforce mode for 3-5 days to audit impact"
+      ]
+    },
+    "version": "1.0.0",
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag to require on Resource Groups"
+        },
+        "defaultValue": "Cost_Center"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "exists": "false"
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  },
+  "id": "/subscriptions/{subscription-id}/providers/Microsoft.Authorization/policyDefinitions/deny-rg-without-cost-center",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "deny-rg-without-cost-center"
+}

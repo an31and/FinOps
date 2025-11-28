@@ -1,0 +1,190 @@
+{
+  "properties": {
+    "displayName": "Cost_Center: Normalize Tag Variations",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "description": "Step 1: Normalizes Cost_Center tag variations to canonical format",
+    "metadata": {
+      "category": "Tags",
+      "version": "1.0.0",
+      "author": "Anand Lakhera (anand.lakhera@ahead.com)",
+      "deploymentOrder": 1,
+      "relatedPolicies": [
+        "cost-center-inherit-rg-v3",
+        "cost-center-cleanup-v3",
+        "deny-rg-without-cost-center"
+      ]
+    },
+    "version": "1.0.0",
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "notIn": [
+              "Microsoft.Resources/subscriptions/resourceGroups"
+            ]
+          },
+          {
+            "field": "tags['Cost_Center']",
+            "exists": false
+          },
+          {
+            "anyOf": [
+              {
+                "field": "tags['Cost-Center']",
+                "exists": true
+              },
+              {
+                "field": "tags['CostCenter']",
+                "exists": true
+              },
+              {
+                "field": "tags['Cost Centre']",
+                "exists": true
+              },
+              {
+                "field": "tags['costcentre']",
+                "exists": true
+              },
+              {
+                "field": "tags['Cost-Centre']",
+                "exists": true
+              },
+              {
+                "field": "tags['Cost Center']",
+                "exists": true
+              },
+              {
+                "field": "tags['Cost_ Center']",
+                "exists": true
+              },
+              {
+                "field": "tags['cost-center']",
+                "exists": true
+              }
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "field": "tags['Cost-Center']",
+                    "exists": true
+                  },
+                  {
+                    "field": "tags['Cost-Center']",
+                    "notEquals": ""
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "field": "tags['CostCenter']",
+                    "exists": true
+                  },
+                  {
+                    "field": "tags['CostCenter']",
+                    "notEquals": ""
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "field": "tags['Cost Centre']",
+                    "exists": true
+                  },
+                  {
+                    "field": "tags['Cost Centre']",
+                    "notEquals": ""
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "field": "tags['costcentre']",
+                    "exists": true
+                  },
+                  {
+                    "field": "tags['costcentre']",
+                    "notEquals": ""
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "field": "tags['Cost-Centre']",
+                    "exists": true
+                  },
+                  {
+                    "field": "tags['Cost-Centre']",
+                    "notEquals": ""
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "field": "tags['Cost Center']",
+                    "exists": true
+                  },
+                  {
+                    "field": "tags['Cost Center']",
+                    "notEquals": ""
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "field": "tags['Cost_ Center']",
+                    "exists": true
+                  },
+                  {
+                    "field": "tags['Cost_ Center']",
+                    "notEquals": ""
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "field": "tags['cost-center']",
+                    "exists": true
+                  },
+                  {
+                    "field": "tags['cost-center']",
+                    "notEquals": ""
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "modify",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/4a9ae827-6dc8-4573-8ac7-8239d42aa03f"
+          ],
+          "operations": [
+            {
+              "field": "tags['Cost_Center']",
+              "operation": "addOrReplace",
+              "value": "[if(not(empty(field('tags[Cost-Center]'))), field('tags[Cost-Center]'), if(not(empty(field('tags[CostCenter]'))), field('tags[CostCenter]'), if(not(empty(field('tags[Cost Centre]'))), field('tags[Cost Centre]'), if(not(empty(field('tags[costcentre]'))), field('tags[costcentre]'), if(not(empty(field('tags[Cost-Centre]'))), field('tags[Cost-Centre]'), if(not(empty(field('tags[Cost Center]'))), field('tags[Cost Center]'), if(not(empty(field('tags[Cost_ Center]'))), field('tags[Cost_ Center]'), field('tags[cost-center]'))))))))]"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "id": "/subscriptions/{subscription-id}/providers/Microsoft.Authorization/policyDefinitions/cost-center-normalize-v3",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "cost-center-normalize-v3"
+}
